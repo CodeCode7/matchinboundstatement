@@ -1,0 +1,9 @@
+<core:FragmentDefinition xmlns="sap.suite.ui.microchart" xmlns:core="sap.ui.core">
+	  <DeltaMicroChart size="S" press="press" 
+                    value1="{ path : 'postingDocument/returnableMaterialQuantity',  type : 'sap.ui.model.odata.type.Decimal' }"
+                     value2="{ path : 'matchedQuantity',  type : 'sap.ui.model.odata.type.Decimal' }" 
+                     displayValue1="{postingDocument/returnableMaterialQuantity} {returnableMaterialUOM_code}" 
+                     displayValue2="{matchedQuantity} {quantityUOM_code}"
+                     deltaDisplayValue="{unmatchedQuantity} {quantityUOM_code}" 
+                     color="{= ${matchedStatus_ID} !== '2' ?  ${matchedStatus_ID} === '1' ? 'Error' : 'Good' : 'Critical' }"/>                 
+</core:FragmentDefinition>

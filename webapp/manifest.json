@@ -1,0 +1,267 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "irp.matchinboundstatement",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"ach": "CA-UI5-FE",
+		"dataSources": {
+			"mainService": {
+				"uri": "/odata/v4/MatchInboundStatementService/",
+				"type": "OData",
+				"settings": {
+					"annotations": [
+						"annotation0"
+					],
+					"odataVersion": "4.0",
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"annotation0": {
+				"type": "ODataAnnotation",
+				"uri": "annotations/annotation0.xml",
+				"settings": {
+					"localUri": "annotations/annotation0.xml"
+				}
+			}
+		},
+		"offline": false,
+		"resources": "resources.json",
+		"sourceTemplate": {
+			"id": "ui5template.fiorielements.v4.lrop",
+			"version": "1.0.0"
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"InboundStatement-Match": {
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					},
+					"semanticObject": "InboundStatement",
+					"action": "Match",
+					"indicatorDataSource": {
+						"path": "/odata/v4/MatchInboundStatementService/MatchInboundTransactions/$count?$filter=matchedStatus_ID%20eq%201",
+						"dataSource": "mainService"
+					},
+					"info": "{{UNMATCHED_TRANSACTIONS}}"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"resources": {
+			"js": [],
+			"css": []
+		},
+		"dependencies": {
+			"minUI5Version": "1.65.0",
+			"libs": {
+				"sap.fe.templates": {},
+				"sap.ui.fl": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
+			},
+			"": {
+				"dataSource": "mainService",
+				"settings": {
+					"synchronizationMode": "None",
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true
+				}
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
+			}
+		},
+		"routing": {
+			"routes": [
+				{
+					"pattern": ":?query:",
+					"name": "MatchInboundStatementsList",
+					"target": [
+						"MatchInboundStatementsList"
+					]
+				},
+				{
+					"pattern": "MatchInboundTransactions({key}):?query:",
+					"name": "MatchInboundStatementsObjectPage",
+					"target": [
+						"MatchInboundStatementsObjectPage"
+					]
+				}
+			],
+			"targets": {
+				"MatchInboundStatementsList": {
+					"type": "Component",
+					"id": "MatchInboundStatementsList",
+					"name": "sap.fe.templates.AnalyticalListPage",
+					"options": {
+						"settings": {
+							"entitySet": "MatchInboundTransactions",
+							"variantManagement": "Page",
+							"navigation": {
+								"MatchInboundTransactions": {
+									"detail": {
+										"route": "MatchInboundStatementsObjectPage"
+									}
+								}
+							},
+							"controlConfiguration": {
+								"@com.sap.vocabularies.UI.v1.Chart": {
+									"chartSettings": {
+										"personalization": false
+									}
+								},
+								"@com.sap.vocabularies.UI.v1.LineItem": {
+									"tableSettings": {
+										"enableExport": false
+									}
+								}
+							}
+						}
+					}
+				},
+				"MatchInboundStatementsObjectPage": {
+					"type": "Component",
+					"id": "MatchInboundStatementsObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"entitySet": "MatchInboundTransactions",
+							"editableHeaderContent": false,
+							"variantManagement": "Control",
+							"controlConfiguration": {
+								"matchedDocuments/@com.sap.vocabularies.UI.v1.LineItem": {
+									"tableSettings": {
+										"enableExport": false,
+										"personalization": true
+									},
+									"columns": {
+										"CustomColumnOnObjectPage": {
+											"header": "{i18n>POSTING_QUANTITY_STATUS}",
+											"position": {
+												"placement": "After",
+												"anchor": "DataField::unmatchedQuantity"
+											},
+											"template": "irp.matchinboundstatement.ext.fragment.MatchedDeltaChart"
+										}
+									},
+									"actions": {
+										"compareMatched": {
+											"text": "{i18n>COMPARE}",
+											"press": "irp.matchinboundstatement.ext.controller.MatchedComparision.handleCustomAction",
+											"requiresSelection": true
+										},
+										"customActionOne": {
+											"press": "irp.matchinboundstatement.ext.controller.PostingDocumentsSection.onRemoveToMatch",
+											"text": "{i18n>BTN_REMOVE_MATCH}",
+											"visible": true,
+											"enabled": true
+										}
+									}
+								},
+								"unMatchedDocuments/@com.sap.vocabularies.UI.v1.LineItem": {
+									"tableSettings": {
+										"enableExport": false,
+										"personalization": true
+									},
+									"columns": {
+										"CustomColumnOnObjectPage": {
+											"header": "{i18n>POSTING_QUANTITY_STATUS}",
+											"position": {
+												"placement": "After",
+												"anchor": "DataField::unmatchedQuantity"
+											},
+											"template": "irp.matchinboundstatement.ext.fragment.UnMatchedDeltaChart"
+										}
+									},
+									"actions": {
+										"compareUnmatched": {
+											"text": "{i18n>COMPARE}",
+											"press": "irp.matchinboundstatement.ext.controller.MatchedComparision.handleCustomAction",
+											"requiresSelection": true
+										},
+										"customActionTwo": {
+											"press": "irp.matchinboundstatement.ext.controller.PostingDocumentsSection.onAddToMatch",
+											"text": "{i18n>BTN_ADD_TO_MATCH}",
+											"requiresSelection": true
+										}
+									}
+								}
+							},
+							"content": {
+								"header": {
+									"facets": {
+										"DeltaChartHeaderFacet": {
+											"type": "XMLFragment",
+											"name": "irp.matchinboundstatement.ext.fragment.DeltaChart",
+											"title": "{i18n>STATEMENT_UNMATCHED_MATCHED_QUANTITY}",
+											"stashed": false,
+											"position": {
+												"placement": "After",
+												"anchor": "HeaderUnMatchQuantity"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		}
+	},
+	"sap.platform.abap": {
+		"_version": "1.1.0",
+		"uri": ""
+	},
+	"sap.platform.hcp": {
+		"_version": "1.1.0",
+		"uri": ""
+	},
+	"sap.fiori": {
+		"_version": "1.1.0",
+		"registrationIds": [],
+		"archeType": "transactional"
+	},
+	"sap.platform.cf": {
+		"oAuthScopes": [
+			"$XSAPPNAME.TransactionRead",
+			"$XSAPPNAME.TransactionCreate",
+			"$XSAPPNAME.TransactionUpdate",
+			"$XSAPPNAME.TransactionDelete"
+		]
+	}
+}
